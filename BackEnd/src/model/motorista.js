@@ -7,7 +7,9 @@ const veiculoSchema = new mongoose.Schema({
 });
 
 const Schema = new mongoose.Schema({
-  usuario_id: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
+  motorista_id: {type: String, required: true},
+  usuario_id: { type: String, ref: "Usuario" },
+  documento_validado: {type: Boolean, default: false},
   veiculo: [veiculoSchema]
 });
 

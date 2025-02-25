@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 
 const Schema = new mongoose.Schema({
-  usuario_id: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
-  viagens: [{ type: mongoose.Schema.Types.ObjectId, ref: "Viagem" }],
-  avaliacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Avaliacao" }]
+  passageiro_id: {type: String, required: true},
+  usuario_id: { type: String, ref: "Usuario" },
+  viagem_id: [{ type: String, ref: "Viagem" }],
+  avaliacoes: [{ type: String, ref: "Avaliacao" }]
 });
 
 module.exports = mongoose.model("Passageiro", Schema);
