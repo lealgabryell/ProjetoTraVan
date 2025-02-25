@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = new mongoose.Schema({
-  passageiro_id: {type: String, required: true},
-  usuario_id: { type: String, ref: "Usuario" },
+  usuario_id: { type: String, ref: "Usuario", required: true, unique: true},
   viagem_id: [{ type: String, ref: "Viagem" }],
   avaliacoes: [{ type: String, ref: "Avaliacao" }]
 });

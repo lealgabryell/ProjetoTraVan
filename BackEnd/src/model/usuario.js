@@ -6,7 +6,6 @@ const Schema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   tipo: { type: String, enum:["passageiro","motorista"], required: true },
   telefone: { type: String, required: true },
-  viagens: [{ type: String, ref: "Viagem" }],
   senha: { type: String, required: true }
 });
 
