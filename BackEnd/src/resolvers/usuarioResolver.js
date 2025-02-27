@@ -1,11 +1,9 @@
-const { findByTipo, getAllUsuarios } = require("../controller/usuarioController.js");
+const { getAllMotoristas, getAllPassageiros, getAllUsuarios } = require("../controller/usuarioController.js");
 
 const resolvers = {
   Query: {
-    usuario: async (_, { tipo }) => await findByTipo(tipo)
-  },
-
-  Query: {
+    motoristas: async () => await getAllMotoristas(),
+    passageiros: async () => await getAllPassageiros(),
     usuarios: async () => await getAllUsuarios()
   }
 };

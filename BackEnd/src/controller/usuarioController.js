@@ -67,8 +67,12 @@ module.exports = {
       const id = req.params.id;
 
       if (!id) {
-        const { usuario_id, nome, email, telefone } = await Usuario.findById(id);
-        res.status(200).json({ usuarioEncontrado: { usuario_id, nome, email, telefone } });
+        const { usuario_id, nome, email, telefone } = await Usuario.findById(
+          id
+        );
+        res
+          .status(200)
+          .json({ usuarioEncontrado: { usuario_id, nome, email, telefone } });
       } else {
         throw new Error("Informacao invalida... Revise o ID");
       }
@@ -80,23 +84,50 @@ module.exports = {
   findAll: async (req, res) => {
     try {
       const usuariosEncontrados = await Usuario.find();
-      res.status(200).json({ usuarios: usuariosEncontrados.map(({ usuario_id, nome, email, tipo, telefone }) => ({ usuario_id, nome, email, tipo, telefone })) });
+      res.status(200).json({
+        usuarios: usuariosEncontrados.map(
+          ({ usuario_id, nome, email, tipo, telefone }) => ({
+            usuario_id,
+            nome,
+            email,
+            tipo,
+            telefone,
+          })
+        ),
+      });
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   },
 
-  findByTipo: async (tipo) => {
-    const usuarios = await Usuario.find();
-    const usuariosFiltrados = usuarios
-      .filter(usuario => usuario.tipo === tipo)
-      .map(({ usuario_id, nome, email, telefone, tipo }) => ({ usuario_id, nome, email, telefone, tipo }));
-
-    console.log(usuariosFiltrados)
-    return usuariosFiltrados;
+  getAllPassageiros: async () => {
+    try {
+      const usuarios = await Usuario.find();
+      const usuariosFiltrados = usuarios.filter(
+        (usuario) => usuario.tipo === "passageiro"
+      );
+      return usuariosFiltrados;
+    } catch (e) {
+      return { messsage: e.message };
+    }
+  },
+  getAllMotoristas: async () => {
+    try {
+      const usuarios = await Usuario.find();
+      const usuariosFiltrados = usuarios.filter(
+        (usuario) => usuario.tipo === "motorista"
+      );
+      return usuariosFiltrados;
+    } catch (e) {
+      return { message: e.message };
+    }
   },
 
   getAllUsuarios: async () => {
-    return await Usuario.find();
-  }
+    try {
+      return await Usuario.find();
+    } catch (e) {
+      return { message: e.message };
+    }
+  },
 };
