@@ -26,7 +26,7 @@ module.exports = {
 
       if (usuario.tipo == "passageiro") {
         await Passageiro.create({ usuario_id });
-      }else if(usuario.tipo == "motorista"){
+      } else if (usuario.tipo == "motorista") {
         await Motorista.create({ usuario_id });
       }
 
@@ -61,4 +61,28 @@ module.exports = {
       res.status(401).json({ message: error.message });
     }
   },
+
+  findOne: async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        const { usuario_id, nome, email, telefone } = await Usuario.findById(id);
+        res.status(200).json({ usuarioEncontrado: { usuario_id, nome, email, telefone } });
+      } else {
+        throw new Error("Informacao invalida... Revise o ID");
+      }
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  },
+
+  findAll: async (req, res) => {
+    try {
+      const usuariosEncontrados = await Usuario.find();
+      res.status(200).json({ usuarios: usuariosEncontrados.map(({ usuario_id, nome, email, tipo, telefone }) => ({ usuario_id, nome, email, tipo, telefone })) });
+    } catch (e) {
+      res.status(400).json({ message: e.message });
+    }
+  }
 };
