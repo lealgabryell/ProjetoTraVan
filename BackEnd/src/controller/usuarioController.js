@@ -84,5 +84,19 @@ module.exports = {
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
+  },
+
+  findByTipo: async (tipo) => {
+    const usuarios = await Usuario.find();
+    const usuariosFiltrados = usuarios
+      .filter(usuario => usuario.tipo === tipo)
+      .map(({ usuario_id, nome, email, telefone, tipo }) => ({ usuario_id, nome, email, telefone, tipo }));
+
+    console.log(usuariosFiltrados)
+    return usuariosFiltrados;
+  },
+
+  getAllUsuarios: async () => {
+    return await Usuario.find();
   }
 };
