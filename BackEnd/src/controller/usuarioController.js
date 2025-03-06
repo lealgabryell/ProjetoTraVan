@@ -10,9 +10,9 @@ let generateUserId = () => {
 };
 
 module.exports = {
-  insertOne: async (req, res) => {
+  insertOne: async (nome1, email1, tipo, telefone, senha) => {
     try {
-      const usuario = req.body;
+      const usuario = { nome: nome1, email: email1, tipo, telefone, senha };
 
       usuario.usuario_id = generateUserId();
 
@@ -29,13 +29,9 @@ module.exports = {
       } else if (usuario.tipo == "motorista") {
         await Motorista.create({ usuario_id });
       }
-
-      res.status(201).json({
-        usuario: { usuario_id, nome, email },
-        message: "Usuario criado com sucesso",
-      });
+      return usuarioSenhaCriptografada;
     } catch (e) {
-      res.status(400).json({ message: e.message });
+      return { message: e.message };
     }
   },
 

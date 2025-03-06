@@ -14,6 +14,10 @@ const typeDefs = gql`
     passageiros: [Usuario]
     motoristas: [Usuario]
   }
+
+  type Mutation {
+    createUsuario(nome: String!, email: String!, tipo: String!, telefone: String!, senha: String!): Usuario
+  }
 `;
 
 module.exports = { typeDefs };
