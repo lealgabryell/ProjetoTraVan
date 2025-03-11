@@ -5,6 +5,7 @@ const usuarioRoute = require("./src/routes/usuarioRoute.js");
 const { ApolloServer } = require("apollo-server-express");
 const { typeDefs } = require("./src/schemas/usuarioSchema.js");
 const resolvers = require("./src/resolvers/usuarioResolver.js");
+const middlewareAuth = require("./src/auth/middlewareAuth.js");
 
 require("dotenv").config();
 
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(middlewareAuth)
 app.use("/api/usuarios", usuarioRoute)
 
 const server = new ApolloServer({
