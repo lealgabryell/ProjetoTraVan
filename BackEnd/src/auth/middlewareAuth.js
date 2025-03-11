@@ -1,12 +1,15 @@
-const jwtService = require('jsonwebtoken');
+const jwtService = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   const path = req.path;
   const method = req.method;
   let token = req.headers.authorization;
-  const nonSecurePaths = ["/api/usuarios"];
+  const nonSecurePaths = ["/api/usuarios/login"];
 
-  if (path.includes(nonSecurePaths) && method === "POST") {
+  if (
+    (path.includes(nonSecurePaths) && method === "POST") ||
+    (path.includes("/graphql") && method === "GET")
+  ) {
     return next();
   }
   if (!token) {
@@ -21,6 +24,6 @@ module.exports = (req, res, next) => {
       return next();
     }
   } catch (e) {
-    res.status(401).json({ message: e.message, content: e })
+    res.status(401).json({ message: e.message, content: e });
   }
-}
+};

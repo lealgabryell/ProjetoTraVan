@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = new mongoose.Schema({
   status: { type: Boolean, default: false },
-  passageiro_id: { type: String, ref: "Passageiro", required: true },
+  passageiro_id: { type: String, ref: "Usuario", required: true },
   viagem_id: { type: String, ref: "Viagem", required: true }
 });
 

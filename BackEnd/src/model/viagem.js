@@ -6,7 +6,7 @@ const Schema = new mognoose.Schema({
   destino: { type: String, required: true },
   data_partida: { type: Date, required: true },
   data_chegada: { type: Date, required: true },
-  passageiro_id: [{ type: String, ref: "Passageiro" }],
+  passageiro_id: [{ type: String, ref: "Usuario" }],
   motorista_id: { type: String, ref: "Motorista" },
   status_viagem: { type: String, required: true },
   preco: { type: Number, required: true },

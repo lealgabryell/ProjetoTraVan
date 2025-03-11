@@ -17,6 +17,7 @@ const typeDefs = gql`
 
   type Mutation {
     createUsuario(nome: String!, email: String!, tipo: String!, telefone: String!, senha: String!): Usuario
+    deleteOne(usuario_id: String!): Usuario
   }
 `;
 

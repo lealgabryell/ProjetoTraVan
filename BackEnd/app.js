@@ -13,12 +13,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(middlewareAuth)
-app.use("/api/usuarios", usuarioRoute)
+app.use(middlewareAuth);
+app.use("/api/usuarios", usuarioRoute);
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
 });
 
 mongoose
@@ -33,9 +33,9 @@ mongoose
 
 const startServer = async () => {
   await server.start();
-  server.applyMiddleware({ app })
-  console.log("Start server iniciado!")
-}
+  server.applyMiddleware({ app });
+  console.log("Start server iniciado!");
+};
 
 app.on("ok", () => {
   startServer(); //inicia servidor apollo (graphql)

@@ -2,11 +2,10 @@ const Usuario = require("../model/usuario.js");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 const jwtService = require("jsonwebtoken");
-const Passageiro = require("../model/passageiro.js");
 const Motorista = require("../model/motorista.js");
 //cria uuid
 let generateUserId = () => {
-  return `user_${uuidv4()}`;
+  return `u.${uuidv4()}`;
 };
 
 module.exports = {
@@ -24,9 +23,7 @@ module.exports = {
       const usuarioSenhaCriptografada = await Usuario.create(usuario);
       const { usuario_id, nome, email } = usuarioSenhaCriptografada;
 
-      if (usuario.tipo == "passageiro") {
-        await Passageiro.create({ usuario_id });
-      } else if (usuario.tipo == "motorista") {
+      if (usuario.tipo == "motorista") {
         await Motorista.create({ usuario_id });
       }
       return usuarioSenhaCriptografada;
@@ -107,6 +104,7 @@ module.exports = {
       return { messsage: e.message };
     }
   },
+
   getAllMotoristas: async () => {
     try {
       const usuarios = await Usuario.find();
@@ -122,6 +120,20 @@ module.exports = {
   getAllUsuarios: async () => {
     try {
       return await Usuario.find();
+    } catch (e) {
+      return { message: e.message };
+    }
+  },
+
+  deleteOne: async (usuario_id) => {
+    try {
+      const usuario = await Usuario.findOne({ usuario_id });
+      if (!usuario) {
+        throw new Error("Usuario não encontrado!");
+      } else {
+        await Usuario.deleteOne({ usuario_id });
+        return { message: "Usuario deletado com sucesso!", content: usuario };
+      }
     } catch (e) {
       return { message: e.message };
     }
