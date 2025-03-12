@@ -8,7 +8,11 @@ const typeDefs = gql`
     tipo: String!
     telefone: String!
   }
-
+  type UsuarioReduzido {
+    usuario_id: String!
+    nome: String!
+    email: String!
+  }
   type Query {
     usuarios: [Usuario]
     passageiros: [Usuario]
@@ -16,8 +20,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createUsuario(nome: String!, email: String!, tipo: String!, telefone: String!, senha: String!): Usuario
-    deleteOne(usuario_id: String!): Usuario
+    deleteOneUsuario(usuario_id: String!): Usuario
   }
 `;
 

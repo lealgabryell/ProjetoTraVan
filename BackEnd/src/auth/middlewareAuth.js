@@ -1,15 +1,19 @@
 const jwtService = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
-  const path = req.path;
+  const path = req.originalUrl;
   const method = req.method;
   let token = req.headers.authorization;
   const nonSecurePaths = ["/api/usuarios/login"];
 
+  console.log("cheguei no middleware");
+
   if (
-    (path.includes(nonSecurePaths) && method === "POST") ||
+    (path.includes(nonSecurePaths[0]) && method === "POST") ||
     (path.includes("/graphql") && method === "GET")
   ) {
+    console.log("passei por aqui");
+
     return next();
   }
   if (!token) {

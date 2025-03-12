@@ -1,16 +1,24 @@
 const mongoose = require("mongoose");
 
 const veiculoSchema = new mongoose.Schema({
-  modelo: { type: String, required: true },
-  capacidade: { type: Number, required: true },
-  placa: { type: String, required: true },
+  modelo: { type: String, default: `` },
+  capacidade: { type: Number, default: `` },
+  placa: { type: String, default: `` },
 });
 
+const veiculoDefault = {
+  modelo: null,
+  capacidade: null,
+  placa: null,
+}
+
 const Schema = new mongoose.Schema({
-  usuario_id: { type: String, ref: "Usuario", required: true},
+  usuario_id: { type: String, ref: "Usuario", required: true },
   documento_validado: { type: Boolean, default: false },
-  veiculo: [veiculoSchema],
-  avaliacao: { type: String }
+  veiculo: {
+    type: veiculoSchema, default: veiculoDefault
+  },
+  avaliacao: { type: String, default: null },
 });
 
 module.exports = mongoose.model("Motorista", Schema);

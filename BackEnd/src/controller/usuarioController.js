@@ -5,43 +5,47 @@ const jwtService = require("jsonwebtoken");
 const Motorista = require("../model/motorista.js");
 //cria uuid
 let generateUserId = () => {
-  return `u.${uuidv4()}`;
+  return `user-${uuidv4()}`;
 };
 
 module.exports = {
-  insertOne: async (nome1, email1, tipo, telefone, senha) => {
+  insertOne: async (req, res) => {
     try {
-      const usuario = { nome: nome1, email: email1, tipo, telefone, senha };
+      const usuario = req.body;
+      if (!usuario) {
+        throw new Error("Informações inválidas! Revise os dados inseridos.");
+      } else {
+        usuario.usuario_id = generateUserId();
+        usuario.senha = await bcrypt.hash(
+          usuario.senha,
+          Number(process.env.ROUNDS)
+        );
 
-      usuario.usuario_id = generateUserId();
+        const usuarioSenhaCriptografada = await Usuario.create(usuario);
+        const { usuario_id, nome, email } = usuarioSenhaCriptografada;
 
-      usuario.senha = await bcrypt.hash(
-        usuario.senha,
-        Number(process.env.ROUNDS)
-      );
-
-      const usuarioSenhaCriptografada = await Usuario.create(usuario);
-      const { usuario_id, nome, email } = usuarioSenhaCriptografada;
-
-      if (usuario.tipo == "motorista") {
-        await Motorista.create({ usuario_id });
+        if (usuario.tipo == "motorista") {
+          const motorista = await Motorista.create({ usuario_id });
+        }
+        res.status(201).json({ message: "Usuario criado com sucesso!", content: { usuario_id, nome, email } });
       }
-      return usuarioSenhaCriptografada;
     } catch (e) {
-      return { message: e.message };
+      res.status(400).json({ message: e.message });
     }
   },
 
   login: async (req, res) => {
     try {
+      console.log("cheguei no try");
       const userResult = await Usuario.findOne({ email: req.body.email });
       if (!userResult) throw new Error("Credenciais Inválidas!");
 
       const { __v, _id, ...user } = userResult.toObject();
+      console.log(user);
       const senhaIsValid = await bcrypt.compare(req.body.senha, user.senha);
       if (!senhaIsValid) throw new Error("Credenciais Inválidas!");
 
-      const token = jwtService.sign(user, process.env.SECRET);
+      const token = jwtService.sign(user, process.env.SECRET, { expiresIn: "30s" });
 
       const { nome, email, tipo } = user;
 
@@ -51,30 +55,31 @@ module.exports = {
         content: { usuario: { nome, email, tipo } },
       });
     } catch (error) {
+      console.log("cai no catch");
       res.status(401).json({ message: error.message });
     }
   },
 
-  findOne: async (req, res) => {
+  getOne: async (req, res) => {
     try {
       const id = req.params.id;
 
       if (!id) {
-        const { usuario_id, nome, email, telefone } = await Usuario.findById(
-          id
+        throw new Error("Informacao invalida... Revise o ID");
+      } else {
+        const { usuario_id, nome, email, telefone, tipo } = await Usuario.findOne(
+          { usuario_id: id }
         );
         res
           .status(200)
-          .json({ usuarioEncontrado: { usuario_id, nome, email, telefone } });
-      } else {
-        throw new Error("Informacao invalida... Revise o ID");
+          .json({ usuarioEncontrado: { usuario_id, nome, email, telefone, tipo } });
       }
     } catch (e) {
       res.status(400).json({ message: e.message });
     }
   },
 
-  findAll: async (req, res) => {
+  getAll: async (req, res) => {
     try {
       const usuariosEncontrados = await Usuario.find();
       res.status(200).json({
@@ -131,11 +136,36 @@ module.exports = {
       if (!usuario) {
         throw new Error("Usuario não encontrado!");
       } else {
-        await Usuario.deleteOne({ usuario_id });
-        return { message: "Usuario deletado com sucesso!", content: usuario };
+        await Usuario.findOneAndDelete({ usuario_id });
+        if (usuario.tipo == "motorista") {
+          await Motorista.findOneAndDelete({ usuario_id });
+        }
+        return usuario;
       }
     } catch (e) {
       return { message: e.message };
     }
   },
-};
+
+  transformarEmMotorista: async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { usuario_id, nome, email, telefone, tipo } = await Usuario.findOne({ usuario_id: id });
+      if (!id) {
+        throw new Error("Usuario não encontrado!");
+      } else if (tipo == "motorista") {
+        throw new Error("Usuario já é motorista!");
+      } else {
+        await Usuario.findOneAndUpdate({ usuario_id }, { tipo: "motorista" });
+        await Motorista.create({ usuario_id });
+        res.status(201).json({ message: "Usuario transformado em motorista com sucesso!" });
+      }
+    } catch (e) {
+      if (e.message === "Usuario já é motorista!") {
+        res.status(200).json({ message: e.message });
+      } else {
+        res.status(400).json({ message: e.message });
+      }
+    }
+  }
+}

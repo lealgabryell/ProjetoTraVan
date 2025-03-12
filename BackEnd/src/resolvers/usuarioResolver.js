@@ -1,5 +1,4 @@
 const {
-  insertOne,
   getAllMotoristas,
   getAllPassageiros,
   getAllUsuarios,
@@ -13,10 +12,7 @@ const resolvers = {
     usuarios: async () => await getAllUsuarios(),
   },
   Mutation: {
-    createUsuario: async (_, { nome, email, tipo, telefone, senha }) => {
-      return await insertOne(nome, email, tipo, telefone, senha);
-    },
-    deleteOne: async (_, { usuario_id }) => {
+    deleteOneUsuario: async (_, { usuario_id }) => {
       return await deleteOne(usuario_id);
     },
   },
